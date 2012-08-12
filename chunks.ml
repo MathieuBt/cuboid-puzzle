@@ -160,7 +160,7 @@ let chunks = (* numbered_with_dimensions *) (* TODO: symmetries *)
 (*
 let _ =
   List.iter (fun ((id, ll, _), _) ->
-    Printf.printf "#%d:\n" id;
+    Printf.printf "#%u:\n" id;
     List.iter (fun l ->
       List.iter (fun x ->
         print_char (if x = 1 then 'X' else ' ') 
@@ -191,7 +191,7 @@ let print_matrix m =
   for x=0 to 2 do
     for y=0 to 3 do
       for z=0 to 4 do
-        Printf.printf "%d " m.(x).(y).(z)
+        Printf.printf "%2u " m.(x).(y).(z)
       done;
       print_newline ()
     done;
@@ -264,7 +264,7 @@ let solve emit chunks =
   and solve_chunk history queue ((id, _, _) as chk) ((a,b,c) as  pos) orientation =
     if add_chunk_at_position matrix pos orientation chk
     then begin
-(*      Printf.printf "--- Setting chunk %d at position (%d,%d,%d) ---\n" id a b c; *)
+(*      Printf.printf "--- Setting chunk %u at position (%u,%u,%u) ---\n" id a b c; *)
       print_string "."; flush stdout;
 (*      print_matrix matrix; *)
       search ((id, pos, orientation)::history) queue;
@@ -310,7 +310,7 @@ let search_duplicate_solution chunks =
       Not_found -> begin
         incr ctr;
 (*
-        Printf.printf "\nFound solution #%d (%d):\n" (!ctr) h;
+        Printf.printf "\nFound solution #%u (%u):\n" (!ctr) h;
         print_matrix m;
 *)
         H.add htbl k ()
@@ -318,11 +318,11 @@ let search_duplicate_solution chunks =
   in
   try
     solve emit chunks;
-    Printf.printf "\nFound %d distinct solutions.\n\n" (!ctr);
+    Printf.printf "\nFound %u distinct solutions.\n\n" (!ctr);
     !ctr
   with
     Duplicate(m, h, _) -> begin
-      Printf.printf "\nFound duplicate solution (%d):\n" h;
+      Printf.printf "\nFound duplicate solution (%u):\n" h;
       print_matrix m;
       print_newline ();
       exit (-1)
@@ -330,7 +330,7 @@ let search_duplicate_solution chunks =
 
 let check_each_chunk_for_duplication chunks =
   List.map (fun (((id,_,_), _) as chk) ->
-    Printf.printf "Checking chunk %d\n" id;
+    Printf.printf "Checking chunk #%u\n" id;
     (* compute the number of placements for each chunk *)
     (chk, search_duplicate_solution [chk])
   ) chunks
@@ -343,7 +343,7 @@ let chunks =
 
 let _ =
   print_string "Reordered chunks by 'determinism':\n";
-  List.iter (fun ((id,_,_), _) -> Printf.printf "%d\n" id) chunks;
+  List.iter (fun ((id,_,_), _) -> Printf.printf "%#2u\n" id) chunks;
   print_newline ()
 
 (* ------ solving ------ *)
