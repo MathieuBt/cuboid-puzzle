@@ -347,6 +347,7 @@ let _ =
   print_newline ()
 
 (* ------ solving ------ *)
+(*
 let _ =
   let emit sol = raise (Found(sol))
   in
@@ -358,3 +359,14 @@ let _ =
       print_string "\nFound solution:\n";
       print_matrix m
     end
+*)
+
+(* ------ solving ------ *)
+
+let _ =
+  let emit (_, m) =
+      print_string "\nFound solution:\n";
+      print_matrix m
+  in
+  solve emit chunks
+
