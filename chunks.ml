@@ -157,6 +157,18 @@ let chunks = (* numbered_with_dimensions *) (* TODO: symmetries *)
     (1, []) basic_chunks
   ))
 
+(*
+let _ =
+  List.iter (fun ((id, ll, _), _) ->
+    Printf.printf "#%d:\n" id;
+    List.iter (fun l ->
+      List.iter (fun x ->
+        print_char (if x = 1 then 'X' else ' ') 
+      ) l;
+      print_newline ()
+    ) ll
+  ) chunks
+*)
 
 let iterate_cubes_at_position f pos (u, v) chunk =
   let _ =
