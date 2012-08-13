@@ -9,11 +9,11 @@ The puzzle consists in building a 3 * 4 * 5 rectangular cuboid based on the chun
 Compilation
 -----------
 
-Requires Ocaml (and some shell).
+Requires Ocaml (and some Unix-like shell).
 
-You may compile with the following command:
+You may compile with
 
-    ocamlopt.opt chunks.ml -o chunks
+    make
 
 and then launch with
 
