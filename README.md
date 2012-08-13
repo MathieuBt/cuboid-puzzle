@@ -79,8 +79,8 @@ XXX
 
 #9:
 <pre>
-  X 
 XXXX
+  X 
 </pre>
 
 #10:
