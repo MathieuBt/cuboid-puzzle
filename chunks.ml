@@ -126,9 +126,9 @@ let basic_chunks =
   [[ 1; 1; 1; 1];
    [ 1; 0; 0; 0]], std;
 
-  [[ 1; 1 ]], line;
-
-  [[ 1; 1; 1]], line;
+  [[ 1; 1; 1];
+   [ 0; 1; 0];
+   [ 0; 1; 0]], sym_vert;
 
   [[ 0; 0; 1; 0];
    [ 1; 1; 1; 1]], std;
@@ -144,10 +144,6 @@ let basic_chunks =
    [ 1; 1; 0]], std
 ]
 
-(*
-let cubes = List.fold_left (List.fold_left (List.fold_left (+))) 0 (List.map fst basic_chunks)
-*)
-
 let dimensions ll = List.length ll, List.length (List.hd ll)
 
 let has_corner_top_left ll = List.hd (List.hd ll) == 1
@@ -158,18 +154,29 @@ let chunks = (* numbered_with_dimensions *) (* TODO: symmetries *)
     (1, []) basic_chunks
   ))
 
-(*
+(* --- counting cubes and printing chunks for verification --- *)
+
 let _ =
-  List.iter (fun ((id, ll, _), _) ->
+  let cubes = List.fold_left (List.fold_left (List.fold_left (+))) 0 (List.map fst basic_chunks)
+  in
+  assert(cubes == (3*4*5));
+
+  Printf.printf "%u chunks defined:\n\n" (List.length chunks);
+
+  List.iter (fun ((id, ll, _, _), _) ->
     Printf.printf "#%u:\n" id;
     List.iter (fun l ->
       List.iter (fun x ->
         print_char (if x = 1 then 'X' else ' ') 
       ) l;
       print_newline ()
-    ) ll
-  ) chunks
-*)
+    ) ll;
+      print_newline ()
+  ) chunks;
+
+  print_newline ()
+
+(* ---- *)
 
 let iterate_cubes_at_position f pos (u, v) chunk =
   let _ =
@@ -198,10 +205,6 @@ let print_matrix m =
     done;
     print_newline ()
   done  
-
-(*
-let _ = List.iter (fun ch -> iterate_cubes_at_position print (0,0,0) (List.hd orientations) ch; print_newline()) basic_chunks
-*)
 
 let check_position (a,b,c) = 
   a <= 2 && b <= 3 && c <= 4 &&
@@ -347,7 +350,7 @@ let chunks =
   List.map fst (List.sort (fun (_, x) (_, y) -> compare x y) chunks_with_counter)
 
 let _ =
-  print_string "Reordered chunks by 'determinism':\n";
+  print_string "Reordering chunks to minize branching factor:\n";
   List.iter (fun ((id,_,_,_), _) -> Printf.printf "%#2u\n" id) chunks;
   print_newline ()
 
