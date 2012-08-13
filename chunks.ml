@@ -108,12 +108,12 @@ let basic_chunks =
 
   [[ 1; 1; 1; 1; 1 ]], line;
 
-  [[ 0; 1; 1];
+  [[ 1; 0; 0];
    [ 1; 1; 0];
-   [ 1; 0; 0]], sym_diag;
+   [ 0; 1; 1]], sym_diag;
 
-  [[ 0; 1; 1; 1];
-   [ 1; 1; 0; 0]], std;
+  [[ 1; 1; 1; 0];
+   [ 0; 0; 1; 1]], std;
 
   [[ 0; 1; 0];
    [ 1; 1; 1];
@@ -123,8 +123,8 @@ let basic_chunks =
    [ 0; 1; 0];
    [ 0; 1; 1]], sym_center;
 
-  [[ 0; 0; 0; 1];
-   [ 1; 1; 1; 1]], std;
+  [[ 1; 1; 1; 1];
+   [ 1; 0; 0; 0]], std;
 
   [[ 1; 1 ]], line;
 
@@ -133,15 +133,15 @@ let basic_chunks =
   [[ 0; 0; 1; 0];
    [ 1; 1; 1; 1]], std;
 
-  [[ 0; 1; 0];
+  [[ 1; 0; 0];
    [ 1; 1; 1];
-   [ 0; 0; 1]], std;
+   [ 0; 1; 0]], std;
 
   [[ 1; 1; 1];
    [ 1; 0; 1]], sym_vert;
 
-  [[ 0; 1; 1];
-   [ 1; 1; 1]], std
+  [[ 1; 1; 1];
+   [ 1; 1; 0]], std
 ]
 
 (*
@@ -150,9 +150,11 @@ let cubes = List.fold_left (List.fold_left (List.fold_left (+))) 0 (List.map fst
 
 let dimensions ll = List.length ll, List.length (List.hd ll)
 
+let has_corner_top_left ll = List.hd (List.hd ll) == 1
+
 let chunks = (* numbered_with_dimensions *) (* TODO: symmetries *)
   List.rev (snd (List.fold_left
-    (fun (i,l) (chk, orientations) -> (i+1), (((i, chk, dimensions chk), orientations)::l))
+    (fun (i,l) (chk, orientations) -> (i+1), (((i, chk, dimensions chk, has_corner_top_left chk), orientations)::l))
     (1, []) basic_chunks
   ))
 
@@ -211,7 +213,7 @@ let check_bounds pos (u,v) (x, y) =
   assert (check_position pos);
   check_position pos2
 
-let clear_chunk_at_position matrix pos orientation (id, chunk, dims) =
+let clear_chunk_at_position matrix pos orientation (id, chunk, dims, _) =
   let f (a,b,c) =
     if matrix.(a).(b).(c) == id
     then matrix.(a).(b).(c) <- 0
@@ -224,7 +226,7 @@ let clear_chunk_at_position matrix pos orientation (id, chunk, dims) =
     with Exit -> false
   else false
   
-let add_chunk_at_position matrix pos orientation ((id, chunk, dims) as chk)=
+let add_chunk_at_position matrix pos orientation ((id, chunk, dims, _) as chk)=
   let f (a,b,c) =
     if matrix.(a).(b).(c) == 0
     then matrix.(a).(b).(c) <- id
@@ -253,15 +255,17 @@ let solve emit chunks =
   in
   let rec search history = function
   | [] -> emit (history, matrix)
-  | (chk, orientations) :: queue ->
+  | ((id, _, _, has_corner) as chk, orientations) :: queue ->
       for x=0 to 2 do
         for y=0 to 3 do
           for z=0 to 4 do
-            List.iter (solve_chunk history queue chk (x,y,z)) orientations
+            if (not has_corner) || matrix.(x).(y).(z) == 0 then
+              List.iter (solve_chunk history queue chk (x,y,z)) orientations
+            else ()
           done
         done
       done
-  and solve_chunk history queue ((id, _, _) as chk) ((a,b,c) as  pos) orientation =
+  and solve_chunk history queue ((id, _, _, _) as chk) ((a,b,c) as  pos) orientation =
     if add_chunk_at_position matrix pos orientation chk
     then begin
 (*      Printf.printf "--- Setting chunk %u at position (%u,%u,%u) ---\n" id a b c; *)
@@ -330,8 +334,8 @@ let search_duplicate_solution chunks =
     end
 
 let check_each_chunk_for_duplication chunks =
-  List.map (fun (((id,_,_), _) as chk) ->
-    Printf.printf "Checking chunk #%u\n" id;
+  List.map (fun (((id,_,_,_), _) as chk) ->
+    Printf.printf "Positioning chunk #%u alone\n" id;
     (* compute the number of placements for each chunk *)
     (chk, search_duplicate_solution [chk])
   ) chunks
@@ -344,7 +348,7 @@ let chunks =
 
 let _ =
   print_string "Reordered chunks by 'determinism':\n";
-  List.iter (fun ((id,_,_), _) -> Printf.printf "%#2u\n" id) chunks;
+  List.iter (fun ((id,_,_,_), _) -> Printf.printf "%#2u\n" id) chunks;
   print_newline ()
 
 (* ------ solving ------ *)
