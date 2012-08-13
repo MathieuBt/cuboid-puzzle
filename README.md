@@ -1,4 +1,3 @@
-
 Summary
 -------
 
@@ -13,9 +12,13 @@ Compilation
 Requires Ocaml (and some shell).
 
 You may compile with the following command:
-   ocamlopt.opt chunks.ml -o chunks
+
+    ocamlopt.opt chunks.ml -o chunks
+
 and then launch with
-   ./chunks
+
+    ./chunks
+
 
 Chunks
 ------
@@ -23,55 +26,81 @@ Chunks
 The crosses represent small 1*1*1 cubes glued together.
 
 #1:
+<pre>
 XXX
 X  
 X  
+</pre>
 
 #2:
+<pre>
 XXXXX
+</pre>
 
 #3:
+<pre>
  XX
 XX 
 X  
+</pre>
 
 #4:
+<pre>
  XXX
 XX  
+</pre>
 
 #5:
+<pre>
  X 
 XXX
  X 
+</pre>
 
 #6:
+<pre>
 XX 
  X 
  XX
+</pre>
 
 #7:
+<pre>
    X
 XXXX
+</pre>
 
 #8:
+<pre>
 XX
+</pre>
 
 #9:
+<pre>
 XXX
+</pre>
 
 #10:
+<pre>
   X 
 XXXX
+</pre>
 
 #11:
+<pre>
  X 
 XXX
   X
+</pre>
 
 #12:
+<pre>
 XXX
 X X
+</pre>
 
 #13:
+<pre>
  XX
 XXX
+</pre>
