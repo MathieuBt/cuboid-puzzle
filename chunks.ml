@@ -6,7 +6,6 @@ let (++) (a, b, c) (a', b', c') = (a+a', b+b', c+c')
 let scal x (a, b, c) = (x*a, x*b, x*c)
 
 
-
 type orientation = vect*vect
 
 type index = int
@@ -236,7 +235,8 @@ let add_chunk_at_position matrix pos orientation ((id, chunk, dims) as chk)=
       iterate_cubes_at_position f pos orientation chunk;
       true
     with Exit ->
-      assert (not (clear_chunk_at_position matrix pos orientation chk));
+      let fully_cleared = clear_chunk_at_position matrix pos orientation chk in
+      assert (not fully_cleared);
       false
   else false
 
@@ -269,7 +269,8 @@ let solve emit chunks =
 (*      print_matrix matrix; *)
       search ((id, pos, orientation)::history) queue;
       print_string "\b \b"; flush stdout;
-      assert (clear_chunk_at_position matrix pos orientation chk)
+      let cleared = clear_chunk_at_position matrix pos orientation chk in
+      assert cleared
     end else ()
   in
   search [] chunks
